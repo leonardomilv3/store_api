@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Optional
 from bson import Decimal128
@@ -34,4 +35,4 @@ class ProductUpdate(BaseSchemaMixin):
 
 
 class ProductUpdateOut(ProductOut):
-    ...
+    updated_at: datetime = Field()
