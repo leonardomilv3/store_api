@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 
 import pytest
@@ -67,6 +68,23 @@ async def test_controller_query_should_return_success(client, products_url):
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), List)
     assert len(response.json()) > 1
+
+
+@pytest.mark.usefixtures("products_inserted")
+async def test_controller_product_filter_price_query_should_return_success(client, products_url):
+    
+    price_min, price_max = Decimal(5.000), Decimal(8.000)
+
+    response = await client.get(f"{products_url}{price_min}/{price_max}")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert isinstance(response.json(), List)
+    assert len(response.json()) > 1
+
+    products = response.json()
+
+    for product in products:
+        assert Decimal(product["price"]) > price_min and Decimal(product["price"]) < price_max
 
 
 async def test_controller_patch_should_return_success(

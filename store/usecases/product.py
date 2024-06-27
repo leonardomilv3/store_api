@@ -35,10 +35,17 @@ class ProductUsecase:
 
     async def query(self) -> List[ProductOut]:
         return [ProductOut(**item) async for item in self.collection.find()]
-
+    
+    async def query_filter_price(self, min, max) -> List[ProductOut]:
+        result = [ProductOut(**item) async for item in self.collection.find(
+            {"price": {"$gt":min, "$lt": max }}
+        )]
+        return result
+    
+    
     async def update(self, id: UUID, body: ProductUpdate) -> ProductUpdateOut:
         product = await self.collection.find_one({"id":id})
-        
+
         if not product:
             raise NotFoundException(message=f"Product not found with filter: {id}")
                 

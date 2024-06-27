@@ -34,6 +34,14 @@ async def get(
 async def query(usecase: ProductUsecase = Depends()) -> List[ProductOut]:
     return await usecase.query()
 
+@router.get(path="/{price_min}/{price_max}", status_code=status.HTTP_200_OK)
+async def query(
+    price_min: float = Path(..., alias="price_min"),
+    price_max: float = Path(..., alias="price_max"),
+    usecase: ProductUsecase = Depends()
+)-> List[ProductOut]:
+    return await usecase.query_filter_price(min=price_min, max=price_max)
+
 
 @router.patch(path="/{id}", status_code=status.HTTP_200_OK)
 async def patch(
