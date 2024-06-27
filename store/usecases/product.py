@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
@@ -5,7 +6,7 @@ import pymongo
 from store.db.mongo import db_client
 from store.models.product import ProductModel
 from store.schemas.product import ProductIn, ProductOut, ProductUpdate, ProductUpdateOut
-from store.core.exceptions import NotFoundException
+from store.core.exceptions import InvalidPriceException, NotFoundException
 
 
 class ProductUsecase:
@@ -16,6 +17,10 @@ class ProductUsecase:
 
     async def create(self, body: ProductIn) -> ProductOut:
         product_model = ProductModel(**body.model_dump())
+        # breakpoint()
+        if product_model.price <= Decimal(0):
+            raise InvalidPriceException(message="Product with price equals or less than zero")
+        
         await self.collection.insert_one(product_model.model_dump())
 
         return ProductOut(**product_model.model_dump())

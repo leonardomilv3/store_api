@@ -8,3 +8,6 @@ class BaseException(Exception):
 
 class NotFoundException(BaseException):
     message = "Not Found"
+
+class InvalidPriceException(BaseException):
+    message = "Price invalid"

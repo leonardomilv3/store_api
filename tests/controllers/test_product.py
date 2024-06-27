@@ -1,7 +1,7 @@
 from typing import List
 
 import pytest
-from tests.factories import product_data
+from tests.factories import product_data, product_invalid_price
 from fastapi import status
 
 
@@ -20,6 +20,14 @@ async def test_controller_create_should_return_success(client, products_url):
         "quantity": 10,
         "price": "8.500",
         "status": True,
+    }
+
+async def test_controller_create_should_return_invalid_price(client, products_url):
+    response = await client.post(products_url, json=product_invalid_price())
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {
+        "detail": "Product with price equals or less than zero"
     }
 
 
